@@ -1,0 +1,84 @@
+---
+# Роль 1: Полный доступ для администраторов и ИБ
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-admin-role
+  labels:
+    app: propdevelopment
+    security-level: critical
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+- nonResourceURLs: ["*"]
+  verbs: ["*"]
+
+---
+# Роль 2: Только просмотр для разработчиков и аналитиков
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-view-role
+  labels:
+    app: propdevelopment
+    security-level: standard
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "namespaces", "events"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "statefulsets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list"]
+
+---
+# Роль 3: Редактирование в namespace для команд доменов
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: namespace-edit-role
+  namespace: sales-domain
+  labels:
+    app: propdevelopment
+    domain: sales
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+# Роль 4: Чтение секретов только для ИБ
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secret-reader-role
+  labels:
+    app: propdevelopment
+    security-level: confidential
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+
+---
+# Роль 5: Доступ к аудиту и логам
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: audit-reader-role
+  labels:
+    app: propdevelopment
+    security-level: standard
+rules:
+- apiGroups: [""]
+  resources: ["events", "pods/log"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["audit.k8s.io"]
+  resources: ["events"]
+  verbs: ["get", "list"]

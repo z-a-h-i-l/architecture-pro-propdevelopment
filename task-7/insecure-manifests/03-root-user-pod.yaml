@@ -1,0 +1,21 @@
+# ❌ НАРУШЕНИЕ: запуск от root (UID 0) без необходимости
+apiVersion: v1
+kind: Pod
+metadata:
+  name: insecure-root-user-pod
+  namespace: audit-zone
+  labels:
+    app: test-insecure
+    security-violation: root-user
+spec:
+  securityContext:
+    runAsUser: 0  # 🔴 Запуск от root
+    runAsGroup: 0
+  containers:
+    - name: nginx
+      image: nginx:latest
+      securityContext:
+        allowPrivilegeEscalation: true  # 🔴 Разрешено повышение привилегий
+      ports:
+        - containerPort: 80
+  restartPolicy: Never

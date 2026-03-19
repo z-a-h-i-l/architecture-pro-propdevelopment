@@ -1,0 +1,23 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sForbiddenPrivilegeEscalation
+metadata:
+  name: forbid-privileged-containers
+  labels:
+    app: propdevelopment
+    policy-type: security
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet", "DaemonSet", "ReplicaSet"]
+    namespaces: ["audit-zone", "production", "staging"]
+    # Исключения для системных namespace
+    excludedNamespaces:
+      - kube-system
+      - gatekeeper-system
+      - cert-manager
+  parameters:
+    exemptNamespaces:
+      - kube-system  # Только для критических системных компонентов

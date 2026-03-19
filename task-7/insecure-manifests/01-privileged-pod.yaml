@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: insecure-privileged-pod
+  namespace: audit-zone
+  labels:
+    app: test-insecure
+    security-violation: privileged-container
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      securityContext:
+        privileged: true  # 🔴 КРИТИЧЕСКОЕ НАРУШЕНИЕ
+      ports:
+        - containerPort: 80
+  restartPolicy: Never

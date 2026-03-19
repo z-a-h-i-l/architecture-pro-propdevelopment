@@ -1,0 +1,34 @@
+# ✅ БЕЗОПАСНО: использование emptyDir вместо hostPath
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-storage-pod
+  namespace: audit-zone
+  labels:
+    app: secure-storage
+    security-compliant: "true"
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: alpine
+      image: alpine:latest
+      command: ["sleep", "3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      volumeMounts:
+        - name: app-data
+          mountPath: /data
+  volumes:
+    - name: app-data
+      emptyDir: {}  # ✅ Временное хранилище внутри кластера
+  restartPolicy: Never

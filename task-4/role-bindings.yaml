@@ -1,0 +1,136 @@
+---
+# Привязка 1: Администраторы к cluster-admin-role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: security-team-admin-binding
+  labels:
+    app: propdevelopment
+subjects:
+- kind: Group
+  name: security-team
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: platform-admins
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Привязка 2: Разработчики к cluster-view-role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: developers-view-binding
+  labels:
+    app: propdevelopment
+subjects:
+- kind: Group
+  name: developers
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: devops
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: bi-analysts
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-view-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Привязка 3: Команда продаж к namespace-edit-role (только sales-domain)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sales-team-edit-binding
+  namespace: sales-domain
+  labels:
+    app: propdevelopment
+    domain: sales
+subjects:
+- kind: Group
+  name: sales-team
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: namespace-edit-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Привязка 4: Команда ЖКХ к namespace-edit-role (только utilities-domain)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: utilities-team-edit-binding
+  namespace: utilities-domain
+  labels:
+    app: propdevelopment
+    domain: utilities
+subjects:
+- kind: Group
+  name: utilities-team
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: namespace-edit-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Привязка 5: Команда финансов к namespace-edit-role (только finance-domain)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: finance-team-edit-binding
+  namespace: finance-domain
+  labels:
+    app: propdevelopment
+    domain: finance
+subjects:
+- kind: Group
+  name: finance-team
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: namespace-edit-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Привязка 6: ИБ к secret-reader-role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: security-team-secret-reader-binding
+  labels:
+    app: propdevelopment
+subjects:
+- kind: Group
+  name: security-team
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: secret-reader-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Привязка 7: ИБ и комплаенс к audit-reader-role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: audit-reader-binding
+  labels:
+    app: propdevelopment
+subjects:
+- kind: Group
+  name: security-team
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: compliance-team
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: audit-reader-role
+  apiGroup: rbac.authorization.k8s.io

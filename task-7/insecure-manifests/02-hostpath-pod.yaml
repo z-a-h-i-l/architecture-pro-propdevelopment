@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: insecure-hostpath-pod
+  namespace: audit-zone
+  labels:
+    app: test-insecure
+    security-violation: hostpath-volume
+spec:
+  containers:
+    - name: alpine
+      image: alpine:latest
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: host-root
+          mountPath: /host  # 🔴 Доступ к корню ФС хоста
+  volumes:
+    - name: host-root
+      hostPath:  # 🔴 КРИТИЧЕСКОЕ НАРУШЕНИЕ
+        path: /
+        type: Directory
+  restartPolicy: Never

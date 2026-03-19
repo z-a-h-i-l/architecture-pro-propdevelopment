@@ -1,0 +1,23 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredNonRootUser
+metadata:
+  name: require-nonroot-user
+  labels:
+    app: propdevelopment
+    policy-type: security
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet", "DaemonSet", "ReplicaSet"]
+    namespaces: ["audit-zone", "production", "staging"]
+    excludedNamespaces:
+      - kube-system
+  parameters:
+    exemptNamespaces: []
+    # Образы, которым временно разрешено работать от root
+    # (следует минимизировать этот список)
+    exemptImages:
+      - "gcr.io/k8s-staging-sig-storage/csi-node-driver-registrar:*"
