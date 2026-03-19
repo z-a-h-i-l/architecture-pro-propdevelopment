@@ -1,0 +1,45 @@
+# ✅ БЕЗОПАСНО: запуск от непривилегированного пользователя
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-user-pod
+  namespace: audit-zone
+  labels:
+    app: secure-app
+    security-compliant: "true"
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001  # ✅ Непривилегированный UID
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: nginx
+      image: nginx:latest
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - NET_BIND_SERVICE  # ✅ Только если нужно привязаться к порту <1024
+      ports:
+        - containerPort: 8080
+      volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /var/cache/nginx
+        - name: run
+          mountPath: /var/run
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: cache
+      emptyDir: {}
+    - name: run
+      emptyDir: {}
+  restartPolicy: Never

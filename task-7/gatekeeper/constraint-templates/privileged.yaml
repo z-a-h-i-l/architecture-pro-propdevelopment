@@ -1,0 +1,45 @@
+# Запрет использования privileged: true в контейнерах
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sforbiddenprivilegeescalation
+  annotations:
+    description: "Запрещает запуск контейнеров с privileged: true"
+    owner: "security-team@propdevelopment.local"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sForbiddenPrivilegeEscalation
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            exemptNamespaces:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sforbiddenprivilegeescalation
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          container.securityContext.privileged == true
+          not is_exempt_namespace(input.review.object.metadata.namespace)
+          msg := sprintf("Контейнер '%s' не может быть запущен с privileged: true. Это нарушает политику безопасности подов.", [container.name])
+        }
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.initContainers[_]
+          container.securityContext.privileged == true
+          not is_exempt_namespace(input.review.object.metadata.namespace)
+          msg := sprintf("Init-контейнер '%s' не может быть запущен с privileged: true.", [container.name])
+        }
+
+        # Проверка исключений по namespace
+        is_exempt_namespace(ns) {
+          exempt := input.parameters.exemptNamespaces[_]
+          exempt == ns
+        }

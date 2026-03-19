@@ -1,0 +1,138 @@
+# Политика по умолчанию: запрещает весь входящий и исходящий трафик для всех подов с меткой app=propdevelopment
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-propdevelopment
+  namespace: propdevelopment
+spec:
+  podSelector:
+    matchLabels:
+      app: propdevelopment
+  policyTypes:
+  - Ingress
+  - Egress
+---
+# Разрешаем исходящие DNS-запросы ко всем подам в kube-system на порты 53
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: propdevelopment
+spec:
+  podSelector:
+    matchLabels:
+      app: propdevelopment
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+# Политика для back-end-api: разрешаем входящие запросы от front-end на порт 80
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-ingress-from-frontend
+  namespace: propdevelopment
+spec:
+  podSelector:
+    matchLabels:
+      role: back-end-api
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: front-end
+    ports:
+    - protocol: TCP
+      port: 80
+---
+# Политика для front-end: разрешаем исходящие запросы к back-end-api на порт 80 и входящие ответы от back-end-api
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: propdevelopment
+spec:
+  podSelector:
+    matchLabels:
+      role: front-end
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: back-end-api
+    ports:
+    - protocol: TCP
+      port: 80
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          role: back-end-api
+    ports:
+    - protocol: TCP
+      port: 80
+---
+# Политика для admin-back-end-api: разрешаем входящие запросы от admin-front-end на порт 80
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-admin-backend-ingress-from-admin-frontend
+  namespace: propdevelopment
+spec:
+  podSelector:
+    matchLabels:
+      role: admin-back-end-api
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: admin-front-end
+    ports:
+    - protocol: TCP
+      port: 80
+---
+# Политика для admin-front-end: разрешаем исходящие запросы к admin-back-end-api на порт 80 и входящие ответы от admin-back-end-api
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-admin-frontend-to-admin-backend
+  namespace: propdevelopment
+spec:
+  podSelector:
+    matchLabels:
+      role: admin-front-end
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: admin-back-end-api
+    ports:
+    - protocol: TCP
+      port: 80
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          role: admin-back-end-api
+    ports:
+    - protocol: TCP
+      port: 80

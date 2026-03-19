@@ -1,0 +1,45 @@
+# ✅ БЕЗОПАСНО: без privileged, с минимальными правами
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-app-pod
+  namespace: audit-zone
+  labels:
+    app: secure-service
+    security-compliant: "true"
+spec:
+  # Security context на уровне пода
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: nginx
+      image: nginx:latest
+      securityContext:
+        allowPrivilegeEscalation: false
+        privileged: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL  # Убираем все возможности
+      ports:
+        - containerPort: 8080  # Нестандартный порт >1024
+      volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: cache-volume
+          mountPath: /var/cache/nginx
+        - name: run-volume
+          mountPath: /var/run
+  volumes:
+    - name: tmp-volume
+      emptyDir: {}
+    - name: cache-volume
+      emptyDir: {}
+    - name: run-volume
+      emptyDir: {}
+  restartPolicy: Never

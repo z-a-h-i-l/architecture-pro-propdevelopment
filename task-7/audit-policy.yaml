@@ -1,0 +1,49 @@
+# Политика аудита для логирования нарушений безопасности подов
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - "RequestReceived"
+
+rules:
+  # 🔴 Критические ресурсы: логируем полный запрос/ответ
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: ""
+        resources: ["pods", "pods/exec", "pods/attach"]
+      - group: "apps"
+        resources: ["deployments", "daemonsets", "statefulsets"]
+    omitStages:
+      - "RequestReceived"
+
+  # 🟡 RBAC изменения: логируем метаданные + запрос
+  - level: Request
+    verbs: ["create", "update", "patch", "delete"]
+    resources:
+      - group: "rbac.authorization.k8s.io"
+        resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+      - group: ""
+        resources: ["serviceaccounts"]
+    omitStages:
+      - "RequestReceived"
+
+  # 🟢 Gatekeeper события: логируем для анализа политик
+  - level: Metadata
+    resources:
+      - group: "constraints.gatekeeper.sh"
+        resources: ["*"]
+      - group: "templates.gatekeeper.sh"
+        resources: ["*"]
+
+  # 🔵 Все остальные события: только метаданные
+  - level: Metadata
+    omitStages:
+      - "RequestReceived"
+
+  # ⚪ Исключения: не логируем health checks
+  - level: None
+    users: ["system:kube-proxy"]
+    verbs: ["watch"]
+    resources:
+      - group: ""
+        resources: ["endpoints", "services"]

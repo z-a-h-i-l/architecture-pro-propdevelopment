@@ -1,0 +1,66 @@
+# Требование runAsNonRoot: true и запрет UID 0
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirednonrootuser
+  annotations:
+    description: "Требует запуск контейнеров от непривилегированного пользователя (non-root)"
+    owner: "security-team@propdevelopment.local"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredNonRootUser
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            exemptNamespaces:
+              type: array
+              items:
+                type: string
+            exemptImages:
+              type: array
+              items:
+                type: string
+              description: "Список образов, которым разрешено работать от root"
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequirednonrootuser
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not is_exempt_namespace(input.review.object.metadata.namespace)
+          not is_exempt_image(container.image)
+          is_running_as_root(container)
+          msg := sprintf("Контейнер '%s' запускается от root (UID 0). Требуется runAsNonRoot: true или runAsUser > 0.", [container.name])
+        }
+
+        violation[{"msg": msg}] {
+          # Проверка на уровне пода
+          input.review.object.spec.securityContext.runAsUser == 0
+          not is_exempt_namespace(input.review.object.metadata.namespace)
+          msg := "Pod запускается от root (runAsUser: 0). Требуется непривилегированный пользователь."
+        }
+
+        is_running_as_root(container) {
+          # Явно указан root
+          container.securityContext.runAsUser == 0
+        }
+
+        is_running_as_root(container) {
+          # runAsNonRoot: false или не указан, а runAsUser не задан
+          not container.securityContext.runAsNonRoot
+          not container.securityContext.runAsUser
+        }
+
+        is_exempt_namespace(ns) {
+          exempt := input.parameters.exemptNamespaces[_]
+          exempt == ns
+        }
+
+        is_exempt_image(img) {
+          exempt := input.parameters.exemptImages[_]
+          exempt == img
+        }

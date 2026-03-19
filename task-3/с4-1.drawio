@@ -1,0 +1,31 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="29.6.4">
+  <diagram name="Страница-1" id="uMXRNLR3JNnA6ip6Z_eN">
+    <mxGraphModel dx="792" dy="1121" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Olt61sCADM4JCH7t5CVI-5" edge="1" parent="1" source="Olt61sCADM4JCH7t5CVI-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Olt61sCADM4JCH7t5CVI-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Olt61sCADM4JCH7t5CVI-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1268BE;fontColor=light-dark(#FFFFFF,#121212);strokeColor=#001DBC;" value="&lt;div&gt;&amp;lt;&amp;lt;system&amp;gt;&amp;gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;PropDevelopment" vertex="1">
+          <mxGeometry height="60" width="230" x="1350" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Olt61sCADM4JCH7t5CVI-6" edge="1" parent="1" source="Olt61sCADM4JCH7t5CVI-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="Olt61sCADM4JCH7t5CVI-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Olt61sCADM4JCH7t5CVI-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#999999, #8a8a8a);fontColor=#FFFFFF;" value="&amp;lt;&amp;lt;externa_system&amp;gt;&amp;gt;&lt;div&gt;&lt;br&gt;Платформа умного дома партнера&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="1640" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Olt61sCADM4JCH7t5CVI-8" edge="1" parent="1" source="Olt61sCADM4JCH7t5CVI-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="Olt61sCADM4JCH7t5CVI-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Olt61sCADM4JCH7t5CVI-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#08427b, #182e44);strokeColor=#36393d;fontColor=#FFFFFF;" value="&amp;lt;&amp;lt;person&amp;gt;&amp;gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Пользователь&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="200" width="220" x="1010" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="Olt61sCADM4JCH7t5CVI-10" parent="1" style="shape=actor;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="60" width="40" x="1100" y="240" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
